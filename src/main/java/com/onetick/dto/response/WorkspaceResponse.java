@@ -1,11 +1,10 @@
 package com.onetick.dto.response;
 
-public class DepartmentResponse {
+public class WorkspaceResponse {
     private Long id;
     private String name;
     private String code;
     private boolean active;
-    private Long workspaceId;
 
     public Long getId() {
         return id;
@@ -37,13 +36,5 @@ public class DepartmentResponse {
 
     public void setActive(boolean active) {
         this.active = active;
-    }
-
-    public Long getWorkspaceId() {
-        return workspaceId;
-    }
-
-    public void setWorkspaceId(Long workspaceId) {
-        this.workspaceId = workspaceId;
     }
 }

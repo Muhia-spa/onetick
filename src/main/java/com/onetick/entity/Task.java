@@ -42,6 +42,10 @@ public class Task extends BaseEntity {
     @JoinColumn(name = "assigned_to_user_id")
     private User assignedTo;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id")
+    private Project project;
+
     public String getTitle() {
         return title;
     }
@@ -112,5 +116,13 @@ public class Task extends BaseEntity {
 
     public void setAssignedTo(User assignedTo) {
         this.assignedTo = assignedTo;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 }

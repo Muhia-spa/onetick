@@ -1,11 +1,15 @@
 package com.onetick.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "departments")
+@Table(
+        name = "departments",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_departments_workspace_code", columnNames = {"workspace_id", "code"}),
+                @UniqueConstraint(name = "uk_departments_workspace_name", columnNames = {"workspace_id", "name"})
+        }
+)
 public class Department extends BaseEntity {
     @Column(nullable = false, unique = true, length = 100)
     private String name;
@@ -15,6 +19,10 @@ public class Department extends BaseEntity {
 
     @Column(nullable = false)
     private boolean active = true;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "workspace_id", nullable = false)
+    private Workspace workspace;
 
     public String getName() {
         return name;
@@ -38,5 +46,13 @@ public class Department extends BaseEntity {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public Workspace getWorkspace() {
+        return workspace;
+    }
+
+    public void setWorkspace(Workspace workspace) {
+        this.workspace = workspace;
     }
 }

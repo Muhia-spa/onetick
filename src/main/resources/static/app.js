@@ -103,6 +103,7 @@ document.getElementById("load-tasks").addEventListener("click", async () => {
 document.getElementById("department-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     const body = {
+        workspaceId: Number(document.getElementById("department-workspace-id").value),
         name: document.getElementById("department-name").value.trim(),
         code: document.getElementById("department-code").value.trim()
     };
@@ -145,7 +146,8 @@ document.getElementById("task-form").addEventListener("submit", async (event) =>
         deadline: toInstant(document.getElementById("task-deadline").value),
         createdByUserId: Number(document.getElementById("task-created-by").value),
         sourceDepartmentId: Number(document.getElementById("task-source-dept").value),
-        targetDepartmentId: Number(document.getElementById("task-target-dept").value)
+        targetDepartmentId: Number(document.getElementById("task-target-dept").value),
+        projectId: document.getElementById("task-project-id").value ? Number(document.getElementById("task-project-id").value) : null
     };
     try {
         print("TASK CREATED", await apiRequest("/api/v1/tasks", {

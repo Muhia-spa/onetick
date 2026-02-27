@@ -13,6 +13,7 @@ public final class DepartmentMapper {
         response.setName(department.getName());
         response.setCode(department.getCode());
         response.setActive(department.isActive());
+        response.setWorkspaceId(department.getWorkspace().getId());
         return response;
     }
 }

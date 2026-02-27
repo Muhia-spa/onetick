@@ -57,6 +57,7 @@
         <div class="grid grid-3">
             <form id="department-form">
                 <h3>Create Department</h3>
+                <label>Workspace ID<input id="department-workspace-id" type="number" value="1" required></label>
                 <label>Name<input id="department-name" required></label>
                 <label>Code<input id="department-code" required></label>
                 <button class="btn btn-primary" type="submit">Create</button>
@@ -95,6 +96,7 @@
                 <label>Created By User ID<input id="task-created-by" type="number" required></label>
                 <label>Source Department ID<input id="task-source-dept" type="number" required></label>
                 <label>Target Department ID<input id="task-target-dept" type="number" required></label>
+                <label>Project ID (optional)<input id="task-project-id" type="number"></label>
                 <button class="btn btn-primary" type="submit">Create</button>
             </form>
         </div>

@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:onetick;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+  mail:
+    host: localhost
+    port: 2525
+    username: test
+    password: test
+
+app:
+  jwt:
+    secret: "0123456789012345678901234567890123456789012345678901234567890123"
+    expiration-minutes: 60
+  bootstrap:
+    admin:
+      enabled: true
+      email: admin@onetick.local
+      name: Onetick Admin
+      password: admin12345
+
+management:
+  health:
+    mail:
+      enabled: false

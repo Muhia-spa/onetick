@@ -19,6 +19,7 @@ public final class TaskMapper {
         response.setSourceDepartmentId(task.getSourceDepartment().getId());
         response.setTargetDepartmentId(task.getTargetDepartment().getId());
         response.setAssignedToUserId(task.getAssignedTo() == null ? null : task.getAssignedTo().getId());
+        response.setProjectId(task.getProject() == null ? null : task.getProject().getId());
         return response;
     }
 }

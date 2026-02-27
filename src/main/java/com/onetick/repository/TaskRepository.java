@@ -5,12 +5,13 @@ import com.onetick.entity.Task;
 import com.onetick.entity.User;
 import com.onetick.entity.enums.TaskStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 
-public interface TaskRepository extends JpaRepository<Task, Long> {
+public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificationExecutor<Task> {
     List<Task> findAllByTargetDepartment(Department department);
     List<Task> findAllByAssignedTo(User user);
     List<Task> findAllByStatusAndDeadlineBetween(TaskStatus status, Instant from, Instant to);

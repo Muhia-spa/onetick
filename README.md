@@ -55,6 +55,16 @@ Override via `application.yml` or environment-backed properties under:
 - Protected endpoints require `Authorization: Bearer <token>`
 - Swagger/OpenAPI includes Bearer auth scheme for interactive testing
 
+## Phase 2 Foundations
+
+- Workspace and Project domain model introduced:
+  - `GET/POST /api/v1/workspaces`
+  - `GET/POST /api/v1/projects`
+- Department and task APIs now support pagination/filtering:
+  - `GET /api/v1/departments?page=0&size=20&search=ops&workspaceId=1`
+  - `GET /api/v1/tasks?page=0&size=20&status=IN_PROGRESS&assignedToUserId=1&projectId=1`
+- Flyway migration `V2` seeds a default workspace and upgrades schema.
+
 ## Profiles
 
 - `dev` (default): bootstrap admin enabled for local onboarding.

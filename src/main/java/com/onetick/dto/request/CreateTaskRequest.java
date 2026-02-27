@@ -32,6 +32,8 @@ public class CreateTaskRequest {
     @NotNull
     private Long targetDepartmentId;
 
+    private Long projectId;
+
     public String getTitle() {
         return title;
     }
@@ -86,5 +88,13 @@ public class CreateTaskRequest {
 
     public void setTargetDepartmentId(Long targetDepartmentId) {
         this.targetDepartmentId = targetDepartmentId;
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 }

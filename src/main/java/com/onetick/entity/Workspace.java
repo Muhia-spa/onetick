@@ -1,19 +1,20 @@
-package com.onetick.dto.response;
+package com.onetick.entity;
 
-public class DepartmentResponse {
-    private Long id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "workspaces")
+public class Workspace extends BaseEntity {
+    @Column(nullable = false, length = 120)
     private String name;
+
+    @Column(nullable = false, unique = true, length = 40)
     private String code;
-    private boolean active;
-    private Long workspaceId;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Column(nullable = false)
+    private boolean active = true;
 
     public String getName() {
         return name;
@@ -37,13 +38,5 @@ public class DepartmentResponse {
 
     public void setActive(boolean active) {
         this.active = active;
-    }
-
-    public Long getWorkspaceId() {
-        return workspaceId;
-    }
-
-    public void setWorkspaceId(Long workspaceId) {
-        this.workspaceId = workspaceId;
     }
 }

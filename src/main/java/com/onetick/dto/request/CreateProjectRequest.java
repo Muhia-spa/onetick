@@ -4,17 +4,25 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public class CreateDepartmentRequest {
+public class CreateProjectRequest {
+    @NotNull
+    private Long workspaceId;
+
     @NotBlank
-    @Size(max = 100)
+    @Size(max = 150)
     private String name;
 
     @NotBlank
-    @Size(max = 20)
+    @Size(max = 50)
     private String code;
 
-    @NotNull
-    private Long workspaceId;
+    public Long getWorkspaceId() {
+        return workspaceId;
+    }
+
+    public void setWorkspaceId(Long workspaceId) {
+        this.workspaceId = workspaceId;
+    }
 
     public String getName() {
         return name;
@@ -30,13 +38,5 @@ public class CreateDepartmentRequest {
 
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public Long getWorkspaceId() {
-        return workspaceId;
-    }
-
-    public void setWorkspaceId(Long workspaceId) {
-        this.workspaceId = workspaceId;
     }
 }

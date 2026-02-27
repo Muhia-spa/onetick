@@ -4,9 +4,11 @@ import com.onetick.dto.request.AddCommentRequest;
 import com.onetick.dto.request.AssignTaskRequest;
 import com.onetick.dto.request.CreateTaskRequest;
 import com.onetick.dto.request.UpdateTaskStatusRequest;
+import com.onetick.dto.response.PaginatedResponse;
 import com.onetick.dto.response.TaskCommentResponse;
 import com.onetick.dto.response.TaskResponse;
 import com.onetick.entity.Department;
+import com.onetick.entity.Project;
 import com.onetick.entity.Task;
 import com.onetick.entity.TaskComment;
 import com.onetick.entity.TaskStatusHistory;
@@ -18,6 +20,7 @@ import com.onetick.exception.NotFoundException;
 import com.onetick.mapper.TaskCommentMapper;
 import com.onetick.mapper.TaskMapper;
 import com.onetick.repository.DepartmentRepository;
+import com.onetick.repository.ProjectRepository;
 import com.onetick.repository.TaskCommentRepository;
 import com.onetick.repository.TaskRepository;
 import com.onetick.repository.TaskStatusHistoryRepository;
@@ -27,11 +30,13 @@ import com.onetick.service.TaskService;
 import com.onetick.util.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.EnumSet;
-import java.util.List;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -42,6 +47,7 @@ public class TaskServiceImpl implements TaskService {
     private final TaskCommentRepository commentRepository;
     private final UserRepository userRepository;
     private final DepartmentRepository departmentRepository;
+    private final ProjectRepository projectRepository;
     private final NotificationService notificationService;
 
     public TaskServiceImpl(TaskRepository taskRepository,
@@ -49,12 +55,14 @@ public class TaskServiceImpl implements TaskService {
                            TaskCommentRepository commentRepository,
                            UserRepository userRepository,
                            DepartmentRepository departmentRepository,
+                           ProjectRepository projectRepository,
                            NotificationService notificationService) {
         this.taskRepository = taskRepository;
         this.statusHistoryRepository = statusHistoryRepository;
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.departmentRepository = departmentRepository;
+        this.projectRepository = projectRepository;
         this.notificationService = notificationService;
     }
 
@@ -74,6 +82,9 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new NotFoundException("Source department not found"));
         Department target = departmentRepository.findById(request.getTargetDepartmentId())
                 .orElseThrow(() -> new NotFoundException("Target department not found"));
+        if (!source.getWorkspace().getId().equals(target.getWorkspace().getId())) {
+            throw new BadRequestException("Source and target departments must belong to the same workspace");
+        }
 
         Task task = new Task();
         task.setTitle(request.getTitle());
@@ -83,6 +94,14 @@ public class TaskServiceImpl implements TaskService {
         task.setCreatedBy(createdBy);
         task.setSourceDepartment(source);
         task.setTargetDepartment(target);
+        if (request.getProjectId() != null) {
+            Project project = projectRepository.findById(request.getProjectId())
+                    .orElseThrow(() -> new NotFoundException("Project not found"));
+            if (!project.getWorkspace().getId().equals(source.getWorkspace().getId())) {
+                throw new BadRequestException("Project workspace must match task departments workspace");
+            }
+            task.setProject(project);
+        }
 
         Task saved = taskRepository.save(task);
         log.info("Created task id={}", saved.getId());
@@ -171,10 +190,25 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<TaskResponse> list() {
-        return taskRepository.findAll().stream()
+    public PaginatedResponse<TaskResponse> list(int page, int size, TaskStatus status, Long assignedToUserId, Long projectId) {
+        Pageable pageable = PageRequest.of(page, size);
+        Specification<Task> spec = (root, query, cb) -> cb.conjunction();
+
+        if (status != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("status"), status));
+        }
+        if (assignedToUserId != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("assignedTo").get("id"), assignedToUserId));
+        }
+        if (projectId != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("project").get("id"), projectId));
+        }
+
+        var result = taskRepository.findAll(spec, pageable);
+        var items = result.getContent().stream()
                 .map(TaskMapper::toResponse)
                 .toList();
+        return PaginatedResponse.of(items, page, size, result.getTotalElements(), result.getTotalPages());
     }
 
     private void enforceAssignerRole() {

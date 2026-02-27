@@ -16,6 +16,7 @@ public class TaskResponse {
     private Long sourceDepartmentId;
     private Long targetDepartmentId;
     private Long assignedToUserId;
+    private Long projectId;
 
     public Long getId() {
         return id;
@@ -95,5 +96,13 @@ public class TaskResponse {
 
     public void setAssignedToUserId(Long assignedToUserId) {
         this.assignedToUserId = assignedToUserId;
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 }

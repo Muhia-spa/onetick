@@ -2,9 +2,11 @@ package com.onetick.config;
 
 import com.onetick.entity.Role;
 import com.onetick.entity.User;
+import com.onetick.entity.Workspace;
 import com.onetick.entity.enums.RoleName;
 import com.onetick.repository.RoleRepository;
 import com.onetick.repository.UserRepository;
+import com.onetick.repository.WorkspaceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +35,18 @@ public class DataInitializer {
                 });
             });
         };
+    }
+
+    @Bean
+    public ApplicationRunner seedDefaultWorkspace(WorkspaceRepository workspaceRepository) {
+        return args -> workspaceRepository.findByCode("DEFAULT").orElseGet(() -> {
+            Workspace workspace = new Workspace();
+            workspace.setCode("DEFAULT");
+            workspace.setName("Default Workspace");
+            Workspace saved = workspaceRepository.save(workspace);
+            log.info("Seeded workspace code={}", saved.getCode());
+            return saved;
+        });
     }
 
     @Bean

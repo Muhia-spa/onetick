@@ -4,16 +4,16 @@ import com.onetick.dto.request.AddCommentRequest;
 import com.onetick.dto.request.AssignTaskRequest;
 import com.onetick.dto.request.CreateTaskRequest;
 import com.onetick.dto.request.UpdateTaskStatusRequest;
+import com.onetick.dto.response.PaginatedResponse;
 import com.onetick.dto.response.TaskCommentResponse;
 import com.onetick.dto.response.TaskResponse;
+import com.onetick.entity.enums.TaskStatus;
 import com.onetick.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/tasks")
@@ -50,7 +50,12 @@ public class TaskController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER','TEAM_LEAD','STAFF')")
-    public ResponseEntity<List<TaskResponse>> list() {
-        return ResponseEntity.ok(taskService.list());
+    public ResponseEntity<PaginatedResponse<TaskResponse>> list(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) TaskStatus status,
+            @RequestParam(required = false) Long assignedToUserId,
+            @RequestParam(required = false) Long projectId) {
+        return ResponseEntity.ok(taskService.list(page, size, status, assignedToUserId, projectId));
     }
 }
