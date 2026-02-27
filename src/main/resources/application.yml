@@ -38,9 +38,20 @@ app:
   jwt:
     secret: "change-this-to-a-strong-secret-with-64-chars-minimum"
     expiration-minutes: 60
+  bootstrap:
+    admin:
+      enabled: true
+      email: admin@onetick.local
+      name: Onetick Admin
+      password: admin12345
 
 logging:
   pattern:
     console: "%d{yyyy-MM-dd'T'HH:mm:ss.SSSX} %-5level [%X{correlationId}] %logger{36} - %msg%n"
   level:
     root: INFO
+
+management:
+  health:
+    mail:
+      enabled: false

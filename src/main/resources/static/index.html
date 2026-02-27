@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneTick Control Deck</title>
+    <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<div class="bg-orb bg-orb-a"></div>
+<div class="bg-orb bg-orb-b"></div>
+
+<main class="shell">
+    <header class="hero">
+        <p class="eyebrow">OneTick Platform</p>
+        <h1>Control Deck</h1>
+        <p class="lead">Validate auth, workflow logic, and service behavior directly in-browser.</p>
+        <div class="hero-actions">
+            <a class="btn btn-ghost" href="/swagger-ui/index.html" target="_blank" rel="noopener noreferrer">Open Swagger</a>
+            <a class="btn btn-ghost" href="/actuator/health" target="_blank" rel="noopener noreferrer">Health Check</a>
+        </div>
+    </header>
+
+    <section class="panel">
+        <h2>Authentication</h2>
+        <form id="login-form" class="grid grid-3">
+            <label>
+                Email
+                <input id="email" type="email" value="admin@onetick.local" required>
+            </label>
+            <label>
+                Password
+                <input id="password" type="password" value="admin12345" required>
+            </label>
+            <button class="btn btn-primary" type="submit">Login</button>
+        </form>
+        <div class="token-row">
+            <label class="token-field">
+                JWT Token
+                <textarea id="token" rows="3" readonly></textarea>
+            </label>
+            <button id="clear-token" class="btn btn-muted" type="button">Clear Token</button>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>Read Operations</h2>
+        <div class="actions">
+            <button class="btn btn-primary" id="load-users" type="button">Load Users</button>
+            <button class="btn btn-primary" id="load-departments" type="button">Load Departments</button>
+            <button class="btn btn-primary" id="load-tasks" type="button">Load Tasks</button>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>Write Operations</h2>
+        <div class="grid grid-3">
+            <form id="department-form">
+                <h3>Create Department</h3>
+                <label>Name<input id="department-name" required></label>
+                <label>Code<input id="department-code" required></label>
+                <button class="btn btn-primary" type="submit">Create</button>
+            </form>
+
+            <form id="user-form">
+                <h3>Create User</h3>
+                <label>Email<input id="user-email" type="email" required></label>
+                <label>Name<input id="user-name" required></label>
+                <label>Password<input id="user-password" type="password" required></label>
+                <label>Primary Department ID<input id="user-dept-id" type="number"></label>
+                <label>Role
+                    <select id="user-role">
+                        <option>ADMIN</option>
+                        <option>MANAGER</option>
+                        <option>TEAM_LEAD</option>
+                        <option selected>STAFF</option>
+                    </select>
+                </label>
+                <button class="btn btn-primary" type="submit">Create</button>
+            </form>
+
+            <form id="task-form">
+                <h3>Create Task</h3>
+                <label>Title<input id="task-title" required></label>
+                <label>Description<textarea id="task-description" rows="3"></textarea></label>
+                <label>Priority
+                    <select id="task-priority">
+                        <option>LOW</option>
+                        <option selected>MEDIUM</option>
+                        <option>HIGH</option>
+                        <option>CRITICAL</option>
+                    </select>
+                </label>
+                <label>Deadline<input id="task-deadline" type="datetime-local" required></label>
+                <label>Created By User ID<input id="task-created-by" type="number" required></label>
+                <label>Source Department ID<input id="task-source-dept" type="number" required></label>
+                <label>Target Department ID<input id="task-target-dept" type="number" required></label>
+                <button class="btn btn-primary" type="submit">Create</button>
+            </form>
+        </div>
+    </section>
+
+    <section class="panel output">
+        <div class="output-head">
+            <h2>Response Console</h2>
+            <button id="clear-output" class="btn btn-muted" type="button">Clear</button>
+        </div>
+        <pre id="output"></pre>
+    </section>
+</main>
+
+<script src="/app.js"></script>
+</body>
+</html>
