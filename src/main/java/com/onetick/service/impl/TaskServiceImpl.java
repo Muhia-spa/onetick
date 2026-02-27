@@ -27,7 +27,8 @@ import com.onetick.repository.TaskStatusHistoryRepository;
 import com.onetick.repository.UserRepository;
 import com.onetick.service.NotificationService;
 import com.onetick.service.TaskService;
-import com.onetick.util.SecurityUtils;
+import com.onetick.service.AuditLogService;
+import com.onetick.service.GovernanceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -37,6 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.EnumSet;
+import java.util.Map;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -49,6 +51,8 @@ public class TaskServiceImpl implements TaskService {
     private final DepartmentRepository departmentRepository;
     private final ProjectRepository projectRepository;
     private final NotificationService notificationService;
+    private final GovernanceService governanceService;
+    private final AuditLogService auditLogService;
 
     public TaskServiceImpl(TaskRepository taskRepository,
                            TaskStatusHistoryRepository statusHistoryRepository,
@@ -56,7 +60,9 @@ public class TaskServiceImpl implements TaskService {
                            UserRepository userRepository,
                            DepartmentRepository departmentRepository,
                            ProjectRepository projectRepository,
-                           NotificationService notificationService) {
+                           NotificationService notificationService,
+                           GovernanceService governanceService,
+                           AuditLogService auditLogService) {
         this.taskRepository = taskRepository;
         this.statusHistoryRepository = statusHistoryRepository;
         this.commentRepository = commentRepository;
@@ -64,6 +70,8 @@ public class TaskServiceImpl implements TaskService {
         this.departmentRepository = departmentRepository;
         this.projectRepository = projectRepository;
         this.notificationService = notificationService;
+        this.governanceService = governanceService;
+        this.auditLogService = auditLogService;
     }
 
     @Override
@@ -82,6 +90,7 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new NotFoundException("Source department not found"));
         Department target = departmentRepository.findById(request.getTargetDepartmentId())
                 .orElseThrow(() -> new NotFoundException("Target department not found"));
+        governanceService.assertWorkspaceAccess(source.getWorkspace().getId());
         if (!source.getWorkspace().getId().equals(target.getWorkspace().getId())) {
             throw new BadRequestException("Source and target departments must belong to the same workspace");
         }
@@ -105,6 +114,8 @@ public class TaskServiceImpl implements TaskService {
 
         Task saved = taskRepository.save(task);
         log.info("Created task id={}", saved.getId());
+        auditLogService.log("TASK_CREATE", "Task", saved.getId(), source.getWorkspace().getId(),
+                Map.of("priority", saved.getPriority().name(), "status", saved.getStatus().name()));
         return TaskMapper.toResponse(saved);
     }
 
@@ -114,6 +125,7 @@ public class TaskServiceImpl implements TaskService {
         enforceAssignerRole();
         Task task = taskRepository.findById(request.getTaskId())
                 .orElseThrow(() -> new NotFoundException("Task not found"));
+        governanceService.assertWorkspaceAccess(task.getSourceDepartment().getWorkspace().getId());
         User assignee = userRepository.findById(request.getAssignedToUserId())
                 .orElseThrow(() -> new NotFoundException("Assignee not found"));
         if (!assignee.isActive()) {
@@ -124,6 +136,8 @@ public class TaskServiceImpl implements TaskService {
         Task saved = taskRepository.save(task);
         notificationService.notifyUser(saved, assignee, NotificationType.ASSIGNMENT);
         log.info("Assigned task id={} to user id={}", saved.getId(), assignee.getId());
+        auditLogService.log("TASK_ASSIGN", "Task", saved.getId(), saved.getSourceDepartment().getWorkspace().getId(),
+                Map.of("assignedToUserId", assignee.getId()));
         return TaskMapper.toResponse(saved);
     }
 
@@ -136,10 +150,11 @@ public class TaskServiceImpl implements TaskService {
         }
         Task task = taskRepository.findById(request.getTaskId())
                 .orElseThrow(() -> new NotFoundException("Task not found"));
+        governanceService.assertWorkspaceAccess(task.getSourceDepartment().getWorkspace().getId());
         User changedBy = userRepository.findById(request.getChangedByUserId())
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
-        if (SecurityUtils.hasRole("STAFF")) {
+        if (com.onetick.util.SecurityUtils.hasRole("STAFF")) {
             boolean isAssignee = task.getAssignedTo() != null && task.getAssignedTo().getId().equals(changedBy.getId());
             boolean isCreator = task.getCreatedBy().getId().equals(changedBy.getId());
             if (!isAssignee && !isCreator) {
@@ -164,6 +179,8 @@ public class TaskServiceImpl implements TaskService {
         statusHistoryRepository.save(history);
 
         log.info("Updated task status id={} {}->{}", saved.getId(), current, next);
+        auditLogService.log("TASK_STATUS_UPDATE", "Task", saved.getId(), saved.getSourceDepartment().getWorkspace().getId(),
+                Map.of("oldStatus", current.name(), "newStatus", next.name()));
         return TaskMapper.toResponse(saved);
     }
 
@@ -176,6 +193,7 @@ public class TaskServiceImpl implements TaskService {
         }
         Task task = taskRepository.findById(request.getTaskId())
                 .orElseThrow(() -> new NotFoundException("Task not found"));
+        governanceService.assertWorkspaceAccess(task.getSourceDepartment().getWorkspace().getId());
         User author = userRepository.findById(request.getCreatedByUserId())
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
@@ -185,6 +203,8 @@ public class TaskServiceImpl implements TaskService {
         comment.setComment(request.getComment());
         TaskComment saved = commentRepository.save(comment);
         log.info("Added comment id={} on task id={}", saved.getId(), task.getId());
+        auditLogService.log("TASK_COMMENT_ADD", "TaskComment", saved.getId(), task.getSourceDepartment().getWorkspace().getId(),
+                Map.of("taskId", task.getId()));
         return TaskCommentMapper.toResponse(saved);
     }
 
@@ -193,6 +213,11 @@ public class TaskServiceImpl implements TaskService {
     public PaginatedResponse<TaskResponse> list(int page, int size, TaskStatus status, Long assignedToUserId, Long projectId) {
         Pageable pageable = PageRequest.of(page, size);
         Specification<Task> spec = (root, query, cb) -> cb.conjunction();
+
+        if (!com.onetick.util.SecurityUtils.hasRole("ADMIN")) {
+            Long workspaceId = governanceService.currentPrimaryWorkspaceIdOrThrow();
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("sourceDepartment").get("workspace").get("id"), workspaceId));
+        }
 
         if (status != null) {
             spec = spec.and((root, query, cb) -> cb.equal(root.get("status"), status));
@@ -212,18 +237,15 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void enforceAssignerRole() {
-        if (!(SecurityUtils.hasRole("ADMIN") || SecurityUtils.hasRole("MANAGER") || SecurityUtils.hasRole("TEAM_LEAD"))) {
+        if (!(com.onetick.util.SecurityUtils.hasRole("ADMIN")
+                || com.onetick.util.SecurityUtils.hasRole("MANAGER")
+                || com.onetick.util.SecurityUtils.hasRole("TEAM_LEAD"))) {
             throw new BadRequestException("Not authorized to assign tasks");
         }
     }
 
     private User getCurrentUser() {
-        String email = SecurityUtils.currentUsername();
-        if (email == null) {
-            throw new BadRequestException("Unauthenticated request");
-        }
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("Authenticated user not found"));
+        return governanceService.currentUserOrThrow();
     }
 
     private boolean isValidTransition(TaskStatus current, TaskStatus next) {

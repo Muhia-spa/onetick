@@ -65,6 +65,14 @@ Override via `application.yml` or environment-backed properties under:
   - `GET /api/v1/tasks?page=0&size=20&status=IN_PROGRESS&assignedToUserId=1&projectId=1`
 - Flyway migration `V2` seeds a default workspace and upgrades schema.
 
+## Phase 3 Governance Baseline
+
+- Audit logging introduced for critical write operations:
+  - Table: `audit_logs` via Flyway migration `V3`
+  - Export API: `GET /api/v1/audit-logs` (ADMIN only, paginated/filterable)
+- Workspace-level access policy enforced for non-admin users in tenant-scoped services.
+- Access-denied conditions now return proper `403` API responses.
+
 ## Profiles
 
 - `dev` (default): bootstrap admin enabled for local onboarding.

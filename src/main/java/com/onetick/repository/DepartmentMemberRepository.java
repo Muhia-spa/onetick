@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface DepartmentMemberRepository extends JpaRepository<DepartmentMember, Long> {
     Optional<DepartmentMember> findByDepartmentAndUser(Department department, User user);
     List<DepartmentMember> findAllByDepartment(Department department);
+    boolean existsByUserIdAndDepartmentWorkspaceId(Long userId, Long workspaceId);
 }

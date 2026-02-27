@@ -6,6 +6,7 @@ import com.onetick.entity.Workspace;
 import com.onetick.exception.ConflictException;
 import com.onetick.mapper.WorkspaceMapper;
 import com.onetick.repository.WorkspaceRepository;
+import com.onetick.service.AuditLogService;
 import com.onetick.service.WorkspaceService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,9 +16,12 @@ import java.util.List;
 @Service
 public class WorkspaceServiceImpl implements WorkspaceService {
     private final WorkspaceRepository workspaceRepository;
+    private final AuditLogService auditLogService;
 
-    public WorkspaceServiceImpl(WorkspaceRepository workspaceRepository) {
+    public WorkspaceServiceImpl(WorkspaceRepository workspaceRepository,
+                                AuditLogService auditLogService) {
         this.workspaceRepository = workspaceRepository;
+        this.auditLogService = auditLogService;
     }
 
     @Override
@@ -30,7 +34,10 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         Workspace workspace = new Workspace();
         workspace.setName(request.getName());
         workspace.setCode(request.getCode());
-        return WorkspaceMapper.toResponse(workspaceRepository.save(workspace));
+        Workspace saved = workspaceRepository.save(workspace);
+        auditLogService.log("WORKSPACE_CREATE", "Workspace", saved.getId(), saved.getId(),
+                java.util.Map.of("code", saved.getCode(), "name", saved.getName()));
+        return WorkspaceMapper.toResponse(saved);
     }
 
     @Override

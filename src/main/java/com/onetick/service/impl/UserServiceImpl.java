@@ -12,7 +12,10 @@ import com.onetick.mapper.UserMapper;
 import com.onetick.repository.DepartmentRepository;
 import com.onetick.repository.RoleRepository;
 import com.onetick.repository.UserRepository;
+import com.onetick.service.AuditLogService;
+import com.onetick.service.GovernanceService;
 import com.onetick.service.UserService;
+import com.onetick.util.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,15 +34,21 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final DepartmentRepository departmentRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuditLogService auditLogService;
+    private final GovernanceService governanceService;
 
     public UserServiceImpl(UserRepository userRepository,
                            RoleRepository roleRepository,
                            DepartmentRepository departmentRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder,
+                           AuditLogService auditLogService,
+                           GovernanceService governanceService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.departmentRepository = departmentRepository;
         this.passwordEncoder = passwordEncoder;
+        this.auditLogService = auditLogService;
+        this.governanceService = governanceService;
     }
 
     @Override
@@ -69,13 +78,23 @@ public class UserServiceImpl implements UserService {
 
         User saved = userRepository.save(user);
         log.info("Created user id={}", saved.getId());
+        Long workspaceId = saved.getPrimaryDepartment() == null ? null : saved.getPrimaryDepartment().getWorkspace().getId();
+        auditLogService.log("USER_CREATE", "User", saved.getId(), workspaceId,
+                java.util.Map.of("email", saved.getEmail(), "active", saved.isActive()));
         return UserMapper.toResponse(saved);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<UserResponse> list() {
-        return userRepository.findAll().stream()
+        List<User> users;
+        if (SecurityUtils.hasRole("ADMIN")) {
+            users = userRepository.findAll();
+        } else {
+            Long workspaceId = governanceService.currentPrimaryWorkspaceIdOrThrow();
+            users = userRepository.findAllByPrimaryDepartmentWorkspaceId(workspaceId);
+        }
+        return users.stream()
                 .map(UserMapper::toResponse)
                 .toList();
     }

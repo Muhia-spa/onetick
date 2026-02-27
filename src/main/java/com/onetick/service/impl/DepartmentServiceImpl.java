@@ -10,7 +10,10 @@ import com.onetick.exception.NotFoundException;
 import com.onetick.mapper.DepartmentMapper;
 import com.onetick.repository.DepartmentRepository;
 import com.onetick.repository.WorkspaceRepository;
+import com.onetick.service.AuditLogService;
 import com.onetick.service.DepartmentService;
+import com.onetick.service.GovernanceService;
+import com.onetick.util.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -24,11 +27,17 @@ public class DepartmentServiceImpl implements DepartmentService {
     private static final Logger log = LoggerFactory.getLogger(DepartmentServiceImpl.class);
     private final DepartmentRepository departmentRepository;
     private final WorkspaceRepository workspaceRepository;
+    private final GovernanceService governanceService;
+    private final AuditLogService auditLogService;
 
     public DepartmentServiceImpl(DepartmentRepository departmentRepository,
-                                 WorkspaceRepository workspaceRepository) {
+                                 WorkspaceRepository workspaceRepository,
+                                 GovernanceService governanceService,
+                                 AuditLogService auditLogService) {
         this.departmentRepository = departmentRepository;
         this.workspaceRepository = workspaceRepository;
+        this.governanceService = governanceService;
+        this.auditLogService = auditLogService;
     }
 
     @Override
@@ -36,6 +45,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     public DepartmentResponse create(CreateDepartmentRequest request) {
         Workspace workspace = workspaceRepository.findById(request.getWorkspaceId())
                 .orElseThrow(() -> new NotFoundException("Workspace not found"));
+        governanceService.assertWorkspaceAccess(workspace.getId());
 
         departmentRepository.findByWorkspaceIdAndCode(workspace.getId(), request.getCode())
                 .ifPresent(d -> {
@@ -51,6 +61,8 @@ public class DepartmentServiceImpl implements DepartmentService {
         department.setWorkspace(workspace);
         Department saved = departmentRepository.save(department);
         log.info("Created department id={}", saved.getId());
+        auditLogService.log("DEPARTMENT_CREATE", "Department", saved.getId(), workspace.getId(),
+                java.util.Map.of("code", saved.getCode(), "name", saved.getName()));
         return DepartmentMapper.toResponse(saved);
     }
 
@@ -59,9 +71,18 @@ public class DepartmentServiceImpl implements DepartmentService {
     public PaginatedResponse<DepartmentResponse> list(int page, int size, String search, Long workspaceId) {
         Pageable pageable = PageRequest.of(page, size);
         Specification<Department> spec = (root, query, cb) -> cb.conjunction();
+        Long scopedWorkspaceId = workspaceId;
 
-        if (workspaceId != null) {
-            spec = spec.and((root, query, cb) -> cb.equal(root.get("workspace").get("id"), workspaceId));
+        if (!SecurityUtils.hasRole("ADMIN")) {
+            if (scopedWorkspaceId == null) {
+                scopedWorkspaceId = governanceService.currentPrimaryWorkspaceIdOrThrow();
+            }
+            governanceService.assertWorkspaceAccess(scopedWorkspaceId);
+        }
+
+        if (scopedWorkspaceId != null) {
+            Long finalWorkspaceId = scopedWorkspaceId;
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("workspace").get("id"), finalWorkspaceId));
         }
         if (search != null && !search.isBlank()) {
             String term = "%" + search.toLowerCase() + "%";
