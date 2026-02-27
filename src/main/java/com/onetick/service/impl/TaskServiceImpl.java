@@ -29,6 +29,7 @@ import com.onetick.service.NotificationService;
 import com.onetick.service.TaskService;
 import com.onetick.service.AuditLogService;
 import com.onetick.service.GovernanceService;
+import com.onetick.service.AutomationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -53,6 +54,7 @@ public class TaskServiceImpl implements TaskService {
     private final NotificationService notificationService;
     private final GovernanceService governanceService;
     private final AuditLogService auditLogService;
+    private final AutomationService automationService;
 
     public TaskServiceImpl(TaskRepository taskRepository,
                            TaskStatusHistoryRepository statusHistoryRepository,
@@ -62,7 +64,8 @@ public class TaskServiceImpl implements TaskService {
                            ProjectRepository projectRepository,
                            NotificationService notificationService,
                            GovernanceService governanceService,
-                           AuditLogService auditLogService) {
+                           AuditLogService auditLogService,
+                           AutomationService automationService) {
         this.taskRepository = taskRepository;
         this.statusHistoryRepository = statusHistoryRepository;
         this.commentRepository = commentRepository;
@@ -72,6 +75,7 @@ public class TaskServiceImpl implements TaskService {
         this.notificationService = notificationService;
         this.governanceService = governanceService;
         this.auditLogService = auditLogService;
+        this.automationService = automationService;
     }
 
     @Override
@@ -116,6 +120,7 @@ public class TaskServiceImpl implements TaskService {
         log.info("Created task id={}", saved.getId());
         auditLogService.log("TASK_CREATE", "Task", saved.getId(), source.getWorkspace().getId(),
                 Map.of("priority", saved.getPriority().name(), "status", saved.getStatus().name()));
+        automationService.onTaskCreated(saved);
         return TaskMapper.toResponse(saved);
     }
 
@@ -181,6 +186,7 @@ public class TaskServiceImpl implements TaskService {
         log.info("Updated task status id={} {}->{}", saved.getId(), current, next);
         auditLogService.log("TASK_STATUS_UPDATE", "Task", saved.getId(), saved.getSourceDepartment().getWorkspace().getId(),
                 Map.of("oldStatus", current.name(), "newStatus", next.name()));
+        automationService.onTaskStatusChanged(saved, current, next);
         return TaskMapper.toResponse(saved);
     }
 

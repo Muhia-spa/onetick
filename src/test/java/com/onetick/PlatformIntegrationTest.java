@@ -98,6 +98,71 @@ class PlatformIntegrationTest {
         assertThat(count).isGreaterThan(0);
     }
 
+    @Test
+    void aiStatusProposalShouldExecuteLowImpactChange() throws Exception {
+        String suffix = String.valueOf(System.nanoTime());
+        String deptCode = "OPS_" + suffix;
+        String deptName = "Ops Dept " + suffix;
+        String taskTitle = "AI Test Task " + suffix;
+        String taskDescription = "AI Test Description " + suffix;
+
+        Long workspaceId = jdbcTemplate.queryForObject(
+                "SELECT id FROM workspaces WHERE code = 'DEFAULT'",
+                Long.class
+        );
+        Long adminId = jdbcTemplate.queryForObject(
+                "SELECT id FROM users WHERE email = 'admin@onetick.local'",
+                Long.class
+        );
+
+        jdbcTemplate.update("""
+                INSERT INTO departments(name, code, active, workspace_id, created_at, updated_at, version)
+                VALUES (?, ?, true, ?, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 0)
+                """, deptName, deptCode, workspaceId);
+        Long departmentId = jdbcTemplate.queryForObject(
+                "SELECT id FROM departments WHERE code = ?",
+                Long.class
+                , deptCode
+        );
+        jdbcTemplate.update("""
+                UPDATE users SET primary_department_id = ? WHERE id = ?
+                """, departmentId, adminId);
+
+        jdbcTemplate.update("""
+                INSERT INTO tasks(title, description, priority, status, deadline, created_by_user_id,
+                                  source_department_id, target_department_id, assigned_to_user_id, project_id,
+                                  created_at, updated_at, version)
+                VALUES (?, ?, 'MEDIUM', 'NEW',
+                        DATEADD('DAY', 2, CURRENT_TIMESTAMP()), ?, ?, ?, ?, null,
+                        CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 0)
+                """, taskTitle, taskDescription, adminId, departmentId, departmentId, adminId);
+        Long taskId = jdbcTemplate.queryForObject(
+                "SELECT id FROM tasks WHERE title = ?",
+                Long.class
+                , taskTitle
+        );
+
+        String token = loginAndGetToken("admin@onetick.local", "admin12345");
+        mockMvc.perform(post("/api/v1/ai/actions/status-change")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "taskId": %d,
+                                  "targetStatus": "IN_PROGRESS",
+                                  "reason": "Start execution based on workload signal"
+                                }
+                                """.formatted(taskId)))
+                .andExpect(status().isCreated());
+
+        String updatedStatus = jdbcTemplate.queryForObject(
+                "SELECT status FROM tasks WHERE id = ?",
+                String.class,
+                taskId
+        );
+        assertThat(updatedStatus).isEqualTo("IN_PROGRESS");
+    }
+
     private String loginAndGetToken(String email, String password) throws Exception {
         MvcResult result = mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(APPLICATION_JSON)
