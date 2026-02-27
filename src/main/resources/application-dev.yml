@@ -1,0 +1,9 @@
+app:
+  bootstrap:
+    admin:
+      enabled: true
+
+management:
+  endpoint:
+    health:
+      show-details: always

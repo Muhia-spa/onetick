@@ -22,6 +22,18 @@ Enterprise task and ticket management backend built with Spring Boot 3, PostgreS
    - Swagger UI: `http://localhost:8080/swagger-ui/index.html`
    - Health: `http://localhost:8080/actuator/health`
 
+## Docker Run (Production-like)
+
+1. Copy env template:
+   - `copy .env.example .env`
+2. Set secure values in `.env` (especially `APP_JWT_SECRET`).
+3. Start stack:
+   - `docker compose up -d --build`
+4. Open:
+   - UI console: `http://localhost:8080/`
+   - Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+   - Health: `http://localhost:8080/actuator/health`
+
 ## Default Bootstrap Admin (for local/dev)
 
 On first startup, if missing, the app seeds:
@@ -42,3 +54,13 @@ Override via `application.yml` or environment-backed properties under:
 - Login endpoint: `POST /api/v1/auth/login`
 - Protected endpoints require `Authorization: Bearer <token>`
 - Swagger/OpenAPI includes Bearer auth scheme for interactive testing
+
+## Profiles
+
+- `dev` (default): bootstrap admin enabled for local onboarding.
+- `prod`: bootstrap admin disabled by default.
+- Override with `SPRING_PROFILES_ACTIVE`.
+
+## Roadmap
+
+- Enterprise transformation plan: [`docs/PLATFORM_ROADMAP.md`](docs/PLATFORM_ROADMAP.md)

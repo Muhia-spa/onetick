@@ -35,6 +35,12 @@ build/
 ### Mac OS ###
 .DS_Store
 
+### Local Build Runtime ###
+.m2/
+.mvn-settings.xml
+app.log
+.app.pid
+
 # Maven
 target/
 pom.xml.tag
