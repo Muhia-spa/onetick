@@ -21,7 +21,8 @@ Enterprise task and ticket management backend built with Spring Boot 3, PostgreS
 3. Start the app:
    - `mvn spring-boot:run`
 4. Open:
-   - UI console: `http://localhost:8080/`
+   - Landing page: `http://localhost:8080/`
+   - Integration console: `http://localhost:8080/console.html`
    - Swagger UI: `http://localhost:8080/swagger-ui/index.html`
    - Health: `http://localhost:8080/actuator/health`
 
@@ -33,9 +34,25 @@ Enterprise task and ticket management backend built with Spring Boot 3, PostgreS
 3. Start stack:
    - `docker compose up -d --build`
 4. Open:
-   - UI console: `http://localhost:8080/`
+   - Landing page: `http://localhost:8080/`
+   - Integration console: `http://localhost:8080/console.html`
    - Swagger UI: `http://localhost:8080/swagger-ui/index.html`
    - Health: `http://localhost:8080/actuator/health`
+
+## End-to-End Frontend + Backend Flow
+
+Use the integration console (`/console.html`) for full-stack validation:
+
+1. Login with bootstrap admin:
+   - Email: `admin@onetick.local`
+   - Password: `admin12345`
+2. Create or load:
+   - Workspaces
+   - Projects
+   - Departments
+   - Users
+   - Tasks
+3. Verify persistence by reloading lists; data is served from the backend and persisted in PostgreSQL.
 
 ## Default Bootstrap Admin (for local/dev)
 

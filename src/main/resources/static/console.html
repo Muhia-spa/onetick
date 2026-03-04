@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneTick Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/console.css">
+</head>
+<body>
+<main class="shell">
+    <header class="top">
+        <div>
+            <p class="kicker">OneTick</p>
+            <h1>Integration Console</h1>
+            <p class="muted">Login, call backend APIs, and verify DB-backed data flows end-to-end.</p>
+        </div>
+        <div class="top-actions">
+            <a class="btn ghost" href="/">Landing</a>
+            <a class="btn ghost" href="/swagger-ui/index.html" target="_blank" rel="noopener noreferrer">Swagger</a>
+            <button id="logout" class="btn dark" type="button">Logout</button>
+        </div>
+    </header>
+
+    <section class="panel">
+        <h2>Authentication</h2>
+        <form id="login-form" class="row">
+            <label>Email<input id="email" type="email" value="admin@onetick.local" required></label>
+            <label>Password<input id="password" type="password" value="admin12345" required></label>
+            <button class="btn brand" type="submit">Login</button>
+        </form>
+        <label>JWT Token<textarea id="token" rows="3" readonly></textarea></label>
+        <p id="session" class="muted">Session: not signed in</p>
+    </section>
+
+    <section class="grid-2">
+        <section class="panel">
+            <div class="head">
+                <h2>Workspaces</h2>
+                <button id="load-workspaces" class="btn ghost" type="button">Refresh</button>
+            </div>
+            <form id="workspace-form" class="stack">
+                <label>Name<input id="workspace-name" required></label>
+                <label>Code<input id="workspace-code" required></label>
+                <button class="btn brand" type="submit">Create Workspace</button>
+            </form>
+            <pre id="workspaces-out" class="out"></pre>
+        </section>
+
+        <section class="panel">
+            <div class="head">
+                <h2>Projects</h2>
+                <button id="load-projects" class="btn ghost" type="button">Refresh</button>
+            </div>
+            <form id="project-form" class="stack">
+                <label>Workspace ID<input id="project-workspace-id" type="number" required></label>
+                <label>Name<input id="project-name" required></label>
+                <label>Code<input id="project-code" required></label>
+                <button class="btn brand" type="submit">Create Project</button>
+            </form>
+            <pre id="projects-out" class="out"></pre>
+        </section>
+    </section>
+
+    <section class="grid-2">
+        <section class="panel">
+            <div class="head">
+                <h2>Departments</h2>
+                <button id="load-departments" class="btn ghost" type="button">Refresh</button>
+            </div>
+            <form id="department-form" class="stack">
+                <label>Workspace ID<input id="department-workspace-id" type="number" required></label>
+                <label>Name<input id="department-name" required></label>
+                <label>Code<input id="department-code" required></label>
+                <button class="btn brand" type="submit">Create Department</button>
+            </form>
+            <pre id="departments-out" class="out"></pre>
+        </section>
+
+        <section class="panel">
+            <div class="head">
+                <h2>Users</h2>
+                <button id="load-users" class="btn ghost" type="button">Refresh</button>
+            </div>
+            <form id="user-form" class="stack">
+                <label>Email<input id="user-email" type="email" required></label>
+                <label>Name<input id="user-name" required></label>
+                <label>Password<input id="user-password" type="password" required></label>
+                <label>Primary Department ID<input id="user-department-id" type="number"></label>
+                <label>Role
+                    <select id="user-role">
+                        <option>ADMIN</option>
+                        <option>MANAGER</option>
+                        <option>TEAM_LEAD</option>
+                        <option selected>STAFF</option>
+                    </select>
+                </label>
+                <button class="btn brand" type="submit">Create User</button>
+            </form>
+            <pre id="users-out" class="out"></pre>
+        </section>
+    </section>
+
+    <section class="panel">
+        <div class="head">
+            <h2>Tasks</h2>
+            <button id="load-tasks" class="btn ghost" type="button">Refresh</button>
+        </div>
+        <form id="task-form" class="row row-4">
+            <label>Title<input id="task-title" required></label>
+            <label>Priority
+                <select id="task-priority">
+                    <option>LOW</option>
+                    <option selected>MEDIUM</option>
+                    <option>HIGH</option>
+                    <option>CRITICAL</option>
+                </select>
+            </label>
+            <label>Deadline<input id="task-deadline" type="datetime-local" required></label>
+            <label>Created By User ID<input id="task-created-by" type="number" required></label>
+            <label>Source Department ID<input id="task-source" type="number" required></label>
+            <label>Target Department ID<input id="task-target" type="number" required></label>
+            <label>Project ID (optional)<input id="task-project" type="number"></label>
+            <label class="full">Description<textarea id="task-description" rows="2"></textarea></label>
+            <button class="btn brand" type="submit">Create Task</button>
+        </form>
+        <pre id="tasks-out" class="out"></pre>
+    </section>
+
+    <section class="panel">
+        <div class="head">
+            <h2>Response Console</h2>
+            <button id="clear-log" class="btn ghost" type="button">Clear</button>
+        </div>
+        <pre id="log" class="out log"></pre>
+    </section>
+</main>
+
+<script src="/console.js"></script>
+</body>
+</html>
