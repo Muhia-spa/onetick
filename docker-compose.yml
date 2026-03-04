@@ -1,6 +1,17 @@
 version: "3.9"
 
 services:
+  redis:
+    image: redis:7
+    container_name: onetick-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
   postgres:
     image: postgres:16
     container_name: onetick-postgres
@@ -24,6 +35,8 @@ services:
       dockerfile: Dockerfile
     container_name: onetick-app
     depends_on:
+      redis:
+        condition: service_healthy
       postgres:
         condition: service_healthy
     environment:
@@ -32,6 +45,8 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-onetick}
       DB_USERNAME: ${DB_USERNAME:-onetick}
       DB_PASSWORD: ${DB_PASSWORD:-onetick}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
       APP_JWT_SECRET: ${APP_JWT_SECRET:-replace-with-64-char-secret}
       APP_BOOTSTRAP_ADMIN_ENABLED: ${APP_BOOTSTRAP_ADMIN_ENABLED:-false}
       APP_BOOTSTRAP_ADMIN_EMAIL: ${APP_BOOTSTRAP_ADMIN_EMAIL:-admin@onetick.local}

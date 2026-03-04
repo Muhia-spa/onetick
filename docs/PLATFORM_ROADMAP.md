@@ -12,34 +12,33 @@ Build OneTick into a production-grade work management platform comparable to Asa
 
 ## Delivery Phases
 
-### Phase 1: Production Foundation (current)
+### Phase 1: Production Foundation (completed)
 - Environment-driven configuration and runtime profiles.
 - Containerized deployment (`Dockerfile`, `docker-compose`).
 - CI pipeline and repeatable build.
 - Health/readiness endpoints and secure defaults.
 - Browser-based validation UX and OpenAPI docs.
 
-### Phase 2: Multi-Tenant Workspace Model
-- Introduce organization/workspace/domain boundaries.
-- Tenant-aware authorization model (RBAC + policy hooks).
-- Workspace-scoped projects, boards, tasks, and memberships.
-- Data isolation strategy and tenant-level audit trail.
+### Phase 2: Multi-Tenant Workspace Model (baseline complete)
+- Workspace/project domain model with tenant-scoped APIs.
+- Tenant-aware authorization in core services.
+- Pagination/filtering on list endpoints.
+- Remaining: organization boundaries, memberships, full data-isolation strategy.
 
-### Phase 3: Enterprise Governance
-- SSO (OIDC/SAML) and SCIM provisioning.
-- Immutable audit logs and SIEM export.
-- Data retention policies, soft-delete lifecycle, legal hold model.
-- Secrets management and key rotation.
+### Phase 3: Enterprise Governance (baseline complete)
+- Audit logs with export API and admin-only access.
+- Proper access-denied handling for tenant-scoped APIs.
+- OIDC scaffolding with Auth0 login/callback.
+- Remaining: SSO (OIDC/SAML), SCIM, data retention/soft-delete/legal hold, secrets management/key rotation.
 
-### Phase 4: Automation and AI
-- Workflow automation engine (triggers, conditions, actions).
-- AI assistant for summarization, planning, and risk detection.
-- Human-in-the-loop approvals for high-impact actions.
-- Prompt/version governance and action traceability.
+### Phase 4: Automation and AI (baseline complete)
+- Workflow automation rules (triggers/actions).
+- AI action proposals with human-in-the-loop approvals.
+- Remaining: AI summarization/planning/risk detection, prompt/version governance, action traceability.
 
-### Phase 5: Scale and Reliability
-- Async processing with message queue.
-- Caching strategy, read optimization, and pagination/search index.
+### Phase 5: Scale and Reliability (in progress)
+- Async processing with message queue (Redis-backed notification queue delivered with retries + DLQ).
+- Caching strategy, read optimization, and pagination/search index (Redis cache enabled for hot entity reads).
 - SLOs, canary rollout, blue/green deployment model.
 - Backup/restore drills and disaster recovery readiness.
 
@@ -51,8 +50,8 @@ Build OneTick into a production-grade work management platform comparable to Asa
 - Compliance: change management and auditable admin actions.
 
 ## Immediate Next Sprint Backlog
-1. Add workspace and project entities with tenant ownership.
-2. Implement pagination/filtering on list APIs.
-3. Add integration tests for auth, role checks, and migrations.
-4. Add Redis and async notification queue.
-5. Introduce release versioning and API deprecation policy.
+1. Expand integration tests for role checks, automation rules, and audit exports.
+2. Introduce release versioning and API deprecation policy.
+3. Add cache hit/miss metrics and dashboard baseline.
+4. Start SSO discovery: pick OIDC provider and define auth flows.
+5. Define SLOs and alert thresholds for core APIs.

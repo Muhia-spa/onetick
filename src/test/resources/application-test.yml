@@ -15,8 +15,13 @@ spring:
     port: 2525
     username: test
     password: test
+  cache:
+    type: simple
 
 app:
+  notifications:
+    queue:
+      backend: local
   jwt:
     secret: "0123456789012345678901234567890123456789012345678901234567890123"
     expiration-minutes: 60

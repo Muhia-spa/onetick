@@ -7,6 +7,7 @@ Enterprise task and ticket management backend built with Spring Boot 3, PostgreS
 - Java 17
 - Maven 3.9+
 - PostgreSQL 17 (or 16+)
+- Redis 7 (notifications queue + cache)
 - Spring Boot 3.3.x
 
 ## Local Run
@@ -15,9 +16,11 @@ Enterprise task and ticket management backend built with Spring Boot 3, PostgreS
    - DB: `onetick`
    - User: `onetick`
    - Password: `onetick`
-2. Start the app:
+2. Start Redis (or set `APP_NOTIFICATIONS_QUEUE_BACKEND=local`):
+   - Default Redis: `localhost:6379`
+3. Start the app:
    - `mvn spring-boot:run`
-3. Open:
+4. Open:
    - UI console: `http://localhost:8080/`
    - Swagger UI: `http://localhost:8080/swagger-ui/index.html`
    - Health: `http://localhost:8080/actuator/health`
@@ -52,6 +55,8 @@ Override via `application.yml` or environment-backed properties under:
 ## API Security
 
 - Login endpoint: `POST /api/v1/auth/login`
+- OIDC login (Auth0): `GET /api/v1/auth/oidc/login`
+- OIDC callback: `GET /api/v1/auth/oidc/callback`
 - Protected endpoints require `Authorization: Bearer <token>`
 - Swagger/OpenAPI includes Bearer auth scheme for interactive testing
 

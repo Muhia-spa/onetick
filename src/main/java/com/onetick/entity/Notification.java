@@ -25,6 +25,15 @@ public class Notification extends BaseEntity {
     @Column(nullable = false, length = 20)
     private NotificationStatus status = NotificationStatus.PENDING;
 
+    @Column(name = "attempt_count", nullable = false)
+    private int attemptCount = 0;
+
+    @Column(name = "last_attempt_at")
+    private Instant lastAttemptAt;
+
+    @Column(name = "last_error", length = 500)
+    private String lastError;
+
     @Column(name = "sent_at")
     private Instant sentAt;
 
@@ -58,6 +67,30 @@ public class Notification extends BaseEntity {
 
     public void setStatus(NotificationStatus status) {
         this.status = status;
+    }
+
+    public int getAttemptCount() {
+        return attemptCount;
+    }
+
+    public void setAttemptCount(int attemptCount) {
+        this.attemptCount = attemptCount;
+    }
+
+    public Instant getLastAttemptAt() {
+        return lastAttemptAt;
+    }
+
+    public void setLastAttemptAt(Instant lastAttemptAt) {
+        this.lastAttemptAt = lastAttemptAt;
+    }
+
+    public String getLastError() {
+        return lastError;
+    }
+
+    public void setLastError(String lastError) {
+        this.lastError = lastError;
     }
 
     public Instant getSentAt() {

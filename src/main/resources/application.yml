@@ -31,15 +31,49 @@ spring:
           auth: true
           starttls:
             enable: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  cache:
+    type: redis
+    redis:
+      time-to-live: ${CACHE_REDIS_TTL_MS:60000}
+      enable-statistics: true
 
 server:
   port: ${SERVER_PORT:8080}
   shutdown: graceful
 
 app:
+  oidc:
+    auth0:
+      enabled: ${APP_OIDC_AUTH0_ENABLED:false}
+      domain: ${APP_OIDC_AUTH0_DOMAIN:}
+      client-id: ${APP_OIDC_AUTH0_CLIENT_ID:}
+      client-secret: ${APP_OIDC_AUTH0_CLIENT_SECRET:}
+      audience: ${APP_OIDC_AUTH0_AUDIENCE:}
+      redirect-uri: ${APP_OIDC_AUTH0_REDIRECT_URI:http://localhost:8080/api/v1/auth/oidc/callback}
+      scopes: ${APP_OIDC_AUTH0_SCOPES:openid profile email}
+      group-claim: ${APP_OIDC_AUTH0_GROUP_CLAIM:groups}
+      state-ttl-ms: ${APP_OIDC_AUTH0_STATE_TTL_MS:300000}
+      group-role-mapping:
+        onetick-admin: ADMIN
+        onetick-manager: MANAGER
+        onetick-team-lead: TEAM_LEAD
   reminders:
     hours-before-deadline: ${APP_REMINDER_HOURS_BEFORE_DEADLINE:24}
     cron: ${APP_REMINDER_CRON:0 0 * * * *}
+  notifications:
+    queue:
+      backend: ${APP_NOTIFICATIONS_QUEUE_BACKEND:redis}
+      key: ${APP_NOTIFICATIONS_QUEUE_KEY:onetick:notifications}
+      dlq-key: ${APP_NOTIFICATIONS_QUEUE_DLQ_KEY:onetick:notifications:dlq}
+      poll-ms: ${APP_NOTIFICATIONS_QUEUE_POLL_MS:2000}
+      max-batch: ${APP_NOTIFICATIONS_QUEUE_MAX_BATCH:50}
+      max-retries: ${APP_NOTIFICATIONS_QUEUE_MAX_RETRIES:3}
+      backoff-base-ms: ${APP_NOTIFICATIONS_QUEUE_BACKOFF_BASE_MS:2000}
+      backoff-max-ms: ${APP_NOTIFICATIONS_QUEUE_BACKOFF_MAX_MS:30000}
   jwt:
     secret: ${APP_JWT_SECRET:change-this-to-a-strong-secret-with-64-chars-minimum}
     expiration-minutes: ${APP_JWT_EXPIRATION_MINUTES:60}
@@ -61,6 +95,9 @@ management:
     web:
       exposure:
         include: health,info,prometheus
+  metrics:
+    enable:
+      cache: true
   endpoint:
     health:
       probes:
