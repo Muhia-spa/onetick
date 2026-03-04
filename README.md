@@ -22,6 +22,7 @@ Enterprise task and ticket management backend built with Spring Boot 3, PostgreS
    - `mvn spring-boot:run`
 4. Open:
    - Landing page: `http://localhost:8080/`
+   - Main app (login -> dashboard -> screens): `http://localhost:8080/app.html`
    - Integration console: `http://localhost:8080/console.html`
    - Swagger UI: `http://localhost:8080/swagger-ui/index.html`
    - Health: `http://localhost:8080/actuator/health`
@@ -35,6 +36,7 @@ Enterprise task and ticket management backend built with Spring Boot 3, PostgreS
    - `docker compose up -d --build`
 4. Open:
    - Landing page: `http://localhost:8080/`
+   - Main app (login -> dashboard -> screens): `http://localhost:8080/app.html`
    - Integration console: `http://localhost:8080/console.html`
    - Swagger UI: `http://localhost:8080/swagger-ui/index.html`
    - Health: `http://localhost:8080/actuator/health`

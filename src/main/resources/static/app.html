@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneTick Workspace</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/app-shell.css">
+</head>
+<body>
+<div class="login-wrap" id="login-wrap">
+    <form id="login-form" class="login-card">
+        <h1>Sign in to Workspace</h1>
+        <p>Use your OneTick account to access dashboard screens.</p>
+        <label>Email<input id="email" type="email" value="admin@onetick.local" required></label>
+        <label>Password<input id="password" type="password" value="admin12345" required></label>
+        <button type="submit">Log In</button>
+        <pre id="login-error" class="error"></pre>
+    </form>
+</div>
+
+<div class="app-shell hidden" id="app-shell">
+    <aside class="side">
+        <div class="brand">
+            <strong>Workspace</strong>
+            <span id="session-user">Personal</span>
+        </div>
+        <nav class="menu">
+            <button class="menu-btn is-active" data-screen="dashboard">Home</button>
+            <button class="menu-btn" data-screen="projects">Projects</button>
+            <button class="menu-btn" data-screen="docs">Docs</button>
+            <button class="menu-btn" data-screen="goals">Goals</button>
+            <button class="menu-btn" data-screen="chat">Team Chat</button>
+        </nav>
+        <button id="logout" class="logout">Logout</button>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <h2 id="screen-title">Dashboard</h2>
+            <div class="topbar-actions">
+                <a href="/" class="link-btn">Landing</a>
+                <a href="/swagger-ui/index.html" target="_blank" rel="noopener noreferrer" class="link-btn">Swagger</a>
+            </div>
+        </header>
+
+        <section id="screen-dashboard" class="screen is-active">
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>My Work</h3>
+                    <button id="reload-dashboard">Refresh</button>
+                </div>
+                <ul id="dashboard-tasks" class="list"></ul>
+            </div>
+            <div class="panel">
+                <h3>Summary</h3>
+                <div class="stats" id="dashboard-stats"></div>
+            </div>
+        </section>
+
+        <section id="screen-projects" class="screen">
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>Project Board</h3>
+                    <button id="reload-projects">Refresh</button>
+                </div>
+                <div class="kanban" id="kanban"></div>
+            </div>
+        </section>
+
+        <section id="screen-docs" class="screen">
+            <div class="panel">
+                <h3>Docs Workspace</h3>
+                <p class="muted">Document collaboration UI is available; backend docs API is not yet implemented in this project.</p>
+                <div class="doc-mock">
+                    <aside></aside>
+                    <article></article>
+                    <aside></aside>
+                </div>
+            </div>
+        </section>
+
+        <section id="screen-goals" class="screen">
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>Goals & OKRs</h3>
+                    <button id="reload-goals">Refresh</button>
+                </div>
+                <div class="stats" id="goal-stats"></div>
+            </div>
+        </section>
+
+        <section id="screen-chat" class="screen">
+            <div class="panel">
+                <h3>Team Chat</h3>
+                <p class="muted">Chat screen shell is in place. Backend chat service is not part of current API scope.</p>
+                <div class="chat-mock">
+                    <aside></aside>
+                    <div><span></span><span></span><span></span></div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script src="/app-shell.js"></script>
+</body>
+</html>

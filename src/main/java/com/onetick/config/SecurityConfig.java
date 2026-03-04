@@ -26,7 +26,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/", "/index.html", "/app.css", "/app.js",
-                                "/console.html", "/console.css", "/console.js", "/favicon.ico"
+                                "/console.html", "/console.css", "/console.js",
+                                "/app.html", "/app-shell.css", "/app-shell.js",
+                                "/favicon.ico"
                         ).permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
