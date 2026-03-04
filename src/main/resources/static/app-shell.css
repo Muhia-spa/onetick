@@ -183,6 +183,18 @@ button {
     margin: 0;
 }
 
+.inline-form {
+    margin-top: 0.7rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.55rem;
+    align-items: end;
+}
+
+.inline-form .full {
+    grid-column: 1 / -1;
+}
+
 .muted {
     color: var(--muted);
 }
@@ -306,7 +318,8 @@ button {
     }
 
     .stats,
-    .kanban {
+    .kanban,
+    .inline-form {
         grid-template-columns: 1fr;
     }
 }

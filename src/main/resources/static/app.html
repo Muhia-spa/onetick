@@ -72,8 +72,17 @@
 
         <section id="screen-docs" class="screen">
             <div class="panel">
-                <h3>Docs Workspace</h3>
-                <p class="muted">Document collaboration UI is available; backend docs API is not yet implemented in this project.</p>
+                <div class="panel-head">
+                    <h3>Docs Workspace</h3>
+                    <button id="reload-docs">Refresh</button>
+                </div>
+                <form id="doc-form" class="inline-form">
+                    <label>Workspace ID<input id="doc-workspace-id" type="number" value="1" required></label>
+                    <label>Title<input id="doc-title" required></label>
+                    <label class="full">Content<textarea id="doc-content" rows="4" required></textarea></label>
+                    <button type="submit">Create Doc</button>
+                </form>
+                <ul id="docs-list" class="list"></ul>
                 <div class="doc-mock">
                     <aside></aside>
                     <article></article>
@@ -88,14 +97,36 @@
                     <h3>Goals & OKRs</h3>
                     <button id="reload-goals">Refresh</button>
                 </div>
+                <form id="goal-form" class="inline-form">
+                    <label>Workspace ID<input id="goal-workspace-id" type="number" value="1" required></label>
+                    <label>Title<input id="goal-title" required></label>
+                    <label>Target Value<input id="goal-target" type="number" min="1" required></label>
+                    <button type="submit">Create Goal</button>
+                </form>
                 <div class="stats" id="goal-stats"></div>
+                <ul id="goals-list" class="list"></ul>
             </div>
         </section>
 
         <section id="screen-chat" class="screen">
             <div class="panel">
-                <h3>Team Chat</h3>
-                <p class="muted">Chat screen shell is in place. Backend chat service is not part of current API scope.</p>
+                <div class="panel-head">
+                    <h3>Team Chat</h3>
+                    <button id="reload-chat">Refresh</button>
+                </div>
+                <form id="channel-form" class="inline-form">
+                    <label>Workspace ID<input id="channel-workspace-id" type="number" value="1" required></label>
+                    <label>Channel Name<input id="channel-name" required></label>
+                    <label>Topic<input id="channel-topic"></label>
+                    <button type="submit">Create Channel</button>
+                </form>
+                <form id="message-form" class="inline-form">
+                    <label>Channel ID<input id="message-channel-id" type="number" required></label>
+                    <label class="full">Message<textarea id="message-text" rows="2" required></textarea></label>
+                    <button type="submit">Send Message</button>
+                </form>
+                <ul id="channels-list" class="list"></ul>
+                <ul id="messages-list" class="list"></ul>
                 <div class="chat-mock">
                     <aside></aside>
                     <div><span></span><span></span><span></span></div>

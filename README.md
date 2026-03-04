@@ -56,6 +56,27 @@ Use the integration console (`/console.html`) for full-stack validation:
    - Tasks
 3. Verify persistence by reloading lists; data is served from the backend and persisted in PostgreSQL.
 
+## Phase 6 Collaboration Modules
+
+New DB-backed modules exposed via REST APIs:
+
+- Goals:
+  - `POST /api/v1/goals`
+  - `PATCH /api/v1/goals/{goalId}/progress`
+  - `GET /api/v1/goals?workspaceId=1`
+- Docs:
+  - `POST /api/v1/docs`
+  - `PUT /api/v1/docs/{docId}`
+  - `GET /api/v1/docs?workspaceId=1`
+- Team Chat:
+  - `POST /api/v1/chat/channels`
+  - `GET /api/v1/chat/channels?workspaceId=1`
+  - `POST /api/v1/chat/messages`
+  - `GET /api/v1/chat/messages?channelId=1`
+
+Flyway migration:
+- `V6__goals_docs_chat.sql`
+
 ## Default Bootstrap Admin (for local/dev)
 
 On first startup, if missing, the app seeds:
