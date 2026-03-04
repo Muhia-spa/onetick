@@ -3,114 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OneTick Control Deck</title>
+    <title>OneTick | Taskflow Landing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/app.css">
 </head>
 <body>
-<div class="bg-orb bg-orb-a"></div>
-<div class="bg-orb bg-orb-b"></div>
-
-<main class="shell">
-    <header class="hero">
-        <p class="eyebrow">OneTick Platform</p>
-        <h1>Control Deck</h1>
-        <p class="lead">Validate auth, workflow logic, and service behavior directly in-browser.</p>
-        <div class="hero-actions">
-            <a class="btn btn-ghost" href="/swagger-ui/index.html" target="_blank" rel="noopener noreferrer">Open Swagger</a>
-            <a class="btn btn-ghost" href="/actuator/health" target="_blank" rel="noopener noreferrer">Health Check</a>
+<div class="page-wrap">
+    <header class="site-header">
+        <div class="nav-shell">
+            <a class="brand" href="/">
+                <span class="brand-dot"></span>
+                <span class="brand-name">Taskflow</span>
+            </a>
+            <nav class="top-nav" aria-label="Primary">
+                <a href="#features">Features</a>
+                <a href="#solutions">Solutions</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#resources">Resources</a>
+            </nav>
+            <div class="auth-actions">
+                <a class="btn btn-plain" href="/swagger-ui/index.html" target="_blank" rel="noopener noreferrer">Log In</a>
+                <a class="btn btn-brand" href="#cta">Get Started</a>
+            </div>
         </div>
     </header>
 
-    <section class="panel">
-        <h2>Authentication</h2>
-        <form id="login-form" class="grid grid-3">
-            <label>
-                Email
-                <input id="email" type="email" value="admin@onetick.local" required>
-            </label>
-            <label>
-                Password
-                <input id="password" type="password" value="admin12345" required>
-            </label>
-            <button class="btn btn-primary" type="submit">Login</button>
-        </form>
-        <div class="token-row">
-            <label class="token-field">
-                JWT Token
-                <textarea id="token" rows="3" readonly></textarea>
-            </label>
-            <button id="clear-token" class="btn btn-muted" type="button">Clear Token</button>
-        </div>
-    </section>
+    <main>
+        <section class="hero" id="solutions">
+            <div class="hero-copy">
+                <h1>One app to replace them all.</h1>
+                <p>All your work in one place: Tasks, Docs, Chat, Goals, and more. Elevate your productivity today.</p>
+                <div class="hero-actions">
+                    <a class="btn btn-brand" href="#cta">Get Started - It's Free</a>
+                    <a class="btn btn-outline" href="/v3/api-docs" target="_blank" rel="noopener noreferrer">Watch Demo</a>
+                </div>
+                <p class="review"><span class="stars">*****</span> Based on 10,000+ reviews</p>
+            </div>
+            <aside class="hero-board" aria-label="Dashboard preview">
+                <div class="board-top">
+                    <strong>Natural Dashboard</strong>
+                    <span>Today</span>
+                </div>
+                <div class="board-grid">
+                    <span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span>
+                </div>
+                <div class="board-chart">
+                    <i class="line line-a"></i>
+                    <i class="line line-b"></i>
+                </div>
+            </aside>
+        </section>
 
-    <section class="panel">
-        <h2>Read Operations</h2>
-        <div class="actions">
-            <button class="btn btn-primary" id="load-users" type="button">Load Users</button>
-            <button class="btn btn-primary" id="load-departments" type="button">Load Departments</button>
-            <button class="btn btn-primary" id="load-tasks" type="button">Load Tasks</button>
-        </div>
-    </section>
+        <section class="trusted">
+            <p>Trusted by over 800,000 highly productive teams</p>
+            <div class="logos">
+                <span>Acme Corp</span>
+                <span>CloudSync</span>
+                <span>GlobalNet</span>
+                <span>BuildIt</span>
+                <span>LabTech</span>
+            </div>
+        </section>
 
-    <section class="panel">
-        <h2>Write Operations</h2>
-        <div class="grid grid-3">
-            <form id="department-form">
-                <h3>Create Department</h3>
-                <label>Workspace ID<input id="department-workspace-id" type="number" value="1" required></label>
-                <label>Name<input id="department-name" required></label>
-                <label>Code<input id="department-code" required></label>
-                <button class="btn btn-primary" type="submit">Create</button>
-            </form>
+        <section class="features-wrap" id="features">
+            <p class="eyebrow">All-in-One Platform</p>
+            <h2>Simplify your work and get more done.</h2>
+            <p class="section-lead">Plan, track, and manage any type of work with project management that flexes to your team's needs.</p>
 
-            <form id="user-form">
-                <h3>Create User</h3>
-                <label>Email<input id="user-email" type="email" required></label>
-                <label>Name<input id="user-name" required></label>
-                <label>Password<input id="user-password" type="password" required></label>
-                <label>Primary Department ID<input id="user-dept-id" type="number"></label>
-                <label>Role
-                    <select id="user-role">
-                        <option>ADMIN</option>
-                        <option>MANAGER</option>
-                        <option>TEAM_LEAD</option>
-                        <option selected>STAFF</option>
-                    </select>
-                </label>
-                <button class="btn btn-primary" type="submit">Create</button>
-            </form>
+            <div class="feature-grid">
+                <article class="feature-card">
+                    <div class="icon icon-blue"></div>
+                    <h3>Tasks</h3>
+                    <p>Plan, organize, and collaborate with powerful task management and custom fields.</p>
+                    <div class="thumb thumb-peach"></div>
+                </article>
+                <article class="feature-card">
+                    <div class="icon icon-violet"></div>
+                    <h3>Docs</h3>
+                    <p>Create beautiful docs and keep work context connected in real-time.</p>
+                    <div class="thumb thumb-cream"></div>
+                </article>
+                <article class="feature-card">
+                    <div class="icon icon-green"></div>
+                    <h3>Goals</h3>
+                    <p>Set measurable targets and track progress with focused reporting.</p>
+                    <div class="thumb thumb-teal"></div>
+                </article>
+            </div>
 
-            <form id="task-form">
-                <h3>Create Task</h3>
-                <label>Title<input id="task-title" required></label>
-                <label>Description<textarea id="task-description" rows="3"></textarea></label>
-                <label>Priority
-                    <select id="task-priority">
-                        <option>LOW</option>
-                        <option selected>MEDIUM</option>
-                        <option>HIGH</option>
-                        <option>CRITICAL</option>
-                    </select>
-                </label>
-                <label>Deadline<input id="task-deadline" type="datetime-local" required></label>
-                <label>Created By User ID<input id="task-created-by" type="number" required></label>
-                <label>Source Department ID<input id="task-source-dept" type="number" required></label>
-                <label>Target Department ID<input id="task-target-dept" type="number" required></label>
-                <label>Project ID (optional)<input id="task-project-id" type="number"></label>
-                <button class="btn btn-primary" type="submit">Create</button>
-            </form>
-        </div>
-    </section>
+            <div class="center">
+                <a class="btn btn-dark" href="/swagger-ui/index.html" target="_blank" rel="noopener noreferrer">See all features</a>
+            </div>
+        </section>
 
-    <section class="panel output">
-        <div class="output-head">
-            <h2>Response Console</h2>
-            <button id="clear-output" class="btn btn-muted" type="button">Clear</button>
-        </div>
-        <pre id="output"></pre>
-    </section>
-</main>
+        <section class="product-previews">
+            <div class="section-heading">
+                <p class="eyebrow">Product Surfaces</p>
+                <h2>Everything your team needs in one connected workspace.</h2>
+            </div>
 
-<script src="/app.js"></script>
+            <article class="preview preview-dark">
+                <div class="preview-head">
+                    <h3>Dashboard</h3>
+                    <p>Daily focus, priorities, and recent docs in one glance.</p>
+                </div>
+                <div class="dash-shell">
+                    <aside class="dash-side"></aside>
+                    <div class="dash-main">
+                        <div class="dash-row"></div>
+                        <div class="dash-grid">
+                            <div></div><div></div><div></div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <div class="preview-grid-2">
+                <article class="preview">
+                    <div class="preview-head">
+                        <h3>Projects Board</h3>
+                        <p>Kanban workflow across stages with visible ownership.</p>
+                    </div>
+                    <div class="kanban">
+                        <div class="kan-col"><span></span><span></span></div>
+                        <div class="kan-col"><span></span><span></span></div>
+                        <div class="kan-col"><span></span></div>
+                        <div class="kan-col"><span></span></div>
+                    </div>
+                </article>
+
+                <article class="preview">
+                    <div class="preview-head">
+                        <h3>Collaborative Docs</h3>
+                        <p>Structured writing with comments and shared editing context.</p>
+                    </div>
+                    <div class="docs">
+                        <aside></aside>
+                        <div></div>
+                        <aside></aside>
+                    </div>
+                </article>
+            </div>
+
+            <div class="preview-grid-2">
+                <article class="preview">
+                    <div class="preview-head">
+                        <h3>Goals and OKRs</h3>
+                        <p>Track objective health, progress bars, and key results.</p>
+                    </div>
+                    <div class="okrs">
+                        <div class="okr-top"></div>
+                        <div class="okr-list">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="preview">
+                    <div class="preview-head">
+                        <h3>Team Chat</h3>
+                        <p>Channels, files, and threaded discussion in one stream.</p>
+                    </div>
+                    <div class="chat">
+                        <aside></aside>
+                        <div class="chat-main">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="cta" id="cta">
+            <h2>Ready to do your best work?</h2>
+            <a class="btn btn-brand" href="/actuator/health" target="_blank" rel="noopener noreferrer">Sign up for free</a>
+            <p>No credit card required.</p>
+        </section>
+    </main>
+
+    <footer class="site-footer" id="resources">
+        <span>OneTick Platform</span>
+        <span id="pricing"><a href="/v3/api-docs" target="_blank" rel="noopener noreferrer">API Docs</a></span>
+    </footer>
+</div>
 </body>
 </html>
